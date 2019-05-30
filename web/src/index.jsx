@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import 'babel-polyfill';
+
 import Root from './components/root';
 
 async function main() {

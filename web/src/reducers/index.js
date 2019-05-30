@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 
+import languageReducer from './language';
+
 import {
   ACTION_LOGOUT,
   ACTION_LOGIN_REQUEST,
@@ -50,6 +52,7 @@ export default function(history) {
   return combineReducers({
     router: connectRouter(history),
     app: reducer,
+    language: languageReducer,
   });
 }
 

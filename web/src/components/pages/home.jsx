@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Localized } from 'fluent-react/compat';
 
 import SentenceCollectorInfo from '../sentence-collector-info';
 import LanguageInfo from '../language-info';
@@ -10,10 +11,9 @@ export default class Home extends React.Component {
     const fullLangs = getLanguages(this.props.languages);
     return (
       <div>
-        <h1>
-          Welcome { this.props.authed ? 'back ' : '' }
-          to the Common Voice Sentence Collector
-        </h1>
+        <Localized id="home-title">
+          <h1></h1>
+        </Localized>
         <p>
           This is a website where we collect and review sentences
           for <a href="https://voice.mozilla.org/">Common Voice</a>.
