@@ -266,7 +266,7 @@ export default class SentencesMeta {
   }
 
   async getLanguages(bucket) {
-    const result = await this.getLanguageTables(bucket);
+    const result = await this.getLanguageTableNames(bucket);
     return result.map(c => c.replace(PREFIX, ''));
   }
 
@@ -396,12 +396,13 @@ export default class SentencesMeta {
 
   async getAllValidatedSentences(language) {
     const filters = {};
-    filters.approved = true;
+    // filters.approved = true;
 
     const allRecords = await this.getAllPaginated(language, filters);
-    const approvedRecords = allRecords.filter((record) => this.checkIfApproved(record));
+    // const approvedRecords = allRecords.filter((record) => this.checkIfApproved(record));
 
-    return approvedRecords;
+    return allRecords;
+    // return approvedRecords;
   }
 
   prepareForSubmission(sentences) {
