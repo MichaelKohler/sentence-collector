@@ -113,6 +113,24 @@ export default class SentencesMeta {
     errorSentences.forEach((sentence) => console.error(sentence));
   }
 
+  async forceDeleteSentencesNotApprovedByUsername(bucket, locale, username, until) {
+    const collectionName = await this.getCollectionName(locale);
+    const records = await this.getAllPaginated(locale);
+    const foundSentences = records
+      .filter((record) => typeof record.approved === 'undefined' && !record.valid.includes(username) &&
+        new Date(record.createdAt) < until && record.username !== 'Oleg')
+      .map((record) => record.id);
+    console.log(`Found ${foundSentences.length} records to delete for ${locale}`);
+
+    await bucket.batch(b => {
+      for (let i = 0; i < foundSentences.length; i++) {
+        b.collection(collectionName).deleteRecord(foundSentences[i]);
+      }
+    });
+
+    console.log('Deletion done.');
+  }
+
   async forceDeleteSpecificSentenceRecords(bucket, locale, username) {
     const collectionName = await this.getCollectionName(locale);
     const records = await this.getAllByUsername(locale, username);

@@ -63,6 +63,11 @@ export default class DB {
     return this.sentences.forceDeleteSpecificSentenceRecords(bucket, locale, username);
   }
 
+  async forceDeleteSentencesNotApprovedByUsername(locale, username, dateUntil) {
+    const bucket = await this.getBucket();
+    return this.sentences.forceDeleteSentencesNotApprovedByUsername(bucket, locale, username, dateUntil);
+  }
+
   async forceDeleteSentences(locale, sentences, dryRun) {
     const bucket = await this.getBucket();
     return this.sentences.forceDeleteSentences(bucket, locale, sentences, dryRun);

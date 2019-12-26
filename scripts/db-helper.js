@@ -17,6 +17,7 @@ const ACTION_FORCE_DELETE_SPECIFIC = 'force-delete-specific';
 const ACTION_FORCE_DELETE_FILE = 'force-delete-file';
 const ACTION_DELETE_VOTES = 'delete-votes';
 const ACTION_APPROVAL_CHECK = 'correct-approvals';
+const ACTION_FORCE_DELETE_SPECIFIC_NOT_APPROVED_USERNAME = 'force-delete-not-approved-by';
 
 const system = process.env.SC_SYSTEM;
 const remote = process.env.KINTO_URL_LOCAL;
@@ -27,6 +28,7 @@ const password = process.env.KINTO_PASSWORD;
 const exportPath = process.env.COMMON_VOICE_PATH + '/server/data';
 const deleteLocale = process.env.DELETE_SPECIFIC_LOCALE;
 const deleteUsername = process.env.DELETE_SPECIFIC_USERNAME;
+const deleteDateUntil = process.env.DELETE_SPECIFIC_UNTIL_DATE;
 const deleteFile = process.env.DELETE_SPECIFIC_SENTENCES_FILE;
 const approvalOnly = /true/.test(process.env.DELETE_APPROVAL_ONLY);
 const DRY_RUN = /true/.test(process.env.DRY_RUN);
@@ -119,6 +121,16 @@ async function forceDeleteSpecificSentences() {
   await db.forceDeleteSpecificSentenceRecords(deleteLocale, deleteUsername);
 }
 
+async function forceDeleteSentencesNotApprovedByUsername() {
+  const remoteHost = system === 'production' ? prodRemoteIP : remote;
+  const db = new DB(remoteHost, username, password);
+  if (!deleteLocale || !deleteUsername || !deleteDateUntil) {
+    fail('DELETE_SPECIFIC_LOCALE, DELETE_SPECIFIC_USERNAME and DELETE_SPECIFIC_UNTIL_DATE are required');
+  }
+
+  await db.forceDeleteSentencesNotApprovedByUsername(deleteLocale, deleteUsername, new Date(deleteDateUntil));
+}
+
 async function correctApprovals(locale) {
   const remoteHost = system === 'production' ? prodRemoteIP : remote;
   const db = new DB(remoteHost, username, password);
@@ -191,6 +203,10 @@ async function run() {
 
       case ACTION_FORCE_DELETE_SPECIFIC:
         await forceDeleteSpecificSentences();
+        break;
+
+      case ACTION_FORCE_DELETE_SPECIFIC_NOT_APPROVED_USERNAME:
+        await forceDeleteSentencesNotApprovedByUsername();
         break;
 
       case ACTION_FORCE_DELETE_FILE:
